@@ -1,0 +1,259 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>7 Sage SMP | Official Store</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <!-- Razorpay SDK -->
+    <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
+    <style>
+        body { background-color: #050a05; color: #e0e7e0; font-family: 'Inter', sans-serif; }
+        .sage-gradient { background: linear-gradient(135deg, #1a3a1a 0%, #050a05 100%); border: 1px solid #2d5a2d; }
+        .gold-glow { box-shadow: 0 0 20px rgba(197, 160, 82, 0.2); border: 1px solid #c5a052; }
+    </style>
+</head>
+<body class="antialiased">
+
+    <!-- Nav -->
+    <nav class="p-6 flex justify-between items-center max-w-7xl mx-auto">
+        <h1 class="text-2xl font-bold tracking-tighter text-green-500">7 SAGE <span class="text-white">SMP</span></h1>
+        <!-- Login button — swaps to username once logged in -->
+        <div id="authArea">
+            <button onclick="login()" class="bg-green-600 hover:bg-green-700 px-6 py-2 rounded-lg font-bold transition">
+                Login with Microsoft
+            </button>
+        </div>
+    </nav>
+
+    <!-- Hero / Subscription Section -->
+    <section class="max-w-7xl mx-auto px-6 py-20 text-center">
+        <h2 class="text-5xl font-extrabold mb-4">Enter the Realm of Sages</h2>
+        <p class="text-gray-400 mb-12 max-w-2xl mx-auto">To access the 7 Sage SMP, you must first become a Common Sage. High-performance hardware, custom lore, and an elite community await.</p>
+
+        <!-- Base Access Card -->
+        <div class="max-w-md mx-auto sage-gradient p-8 rounded-3xl mb-12">
+            <span class="bg-green-900 text-green-400 px-4 py-1 rounded-full text-sm font-bold">REQUIRED FOR ACCESS</span>
+            <h3 class="text-3xl font-bold mt-4">Common Sage</h3>
+            <p class="text-4xl font-bold my-4">₹100<span class="text-lg text-gray-500">/month</span></p>
+            <ul class="text-left space-y-3 mb-8 text-gray-300">
+                <li><i class="fas fa-check text-green-500 mr-2"></i> Server Whitelist Access</li>
+                <li><i class="fas fa-check text-green-500 mr-2"></i> Basic Sage Kit</li>
+                <li><i class="fas fa-check text-green-500 mr-2"></i> Discord Role Sync</li>
+            </ul>
+
+            <!-- Payment method selector -->
+            <div class="flex gap-3 mb-4">
+                <button onclick="startPayment('common_sage','razorpay')"
+                    class="flex-1 bg-white text-black font-bold py-4 rounded-xl hover:bg-gray-200 transition">
+                    Pay ₹100 (UPI/Card)
+                </button>
+                <button onclick="startPayment('common_sage','paypal')"
+                    class="flex-1 bg-blue-600 text-white font-bold py-4 rounded-xl hover:bg-blue-500 transition">
+                    Pay via PayPal
+                </button>
+            </div>
+            <p id="authMsg" class="text-yellow-400 text-sm hidden">⚠️ Please login with Microsoft before purchasing.</p>
+        </div>
+
+        <!-- Upgrade Grid -->
+        <div id="upgrades" class="grid md:grid-cols-3 gap-8 mt-20 border-t border-gray-800 pt-20">
+            <!-- Elder Sage -->
+            <div class="sage-gradient p-6 rounded-2xl">
+                <h4 class="text-xl font-bold">Elder Sage</h4>
+                <p class="text-2xl font-bold text-green-400">₹249/mo</p>
+                <div class="flex flex-col gap-2 mt-6">
+                    <button onclick="startPayment('elder_sage','razorpay')" class="w-full py-2 border border-green-500 rounded-lg hover:bg-green-500/10">Upgrade (₹ UPI)</button>
+                    <button onclick="startPayment('elder_sage','paypal')"   class="w-full py-2 border border-blue-500 rounded-lg hover:bg-blue-500/10 text-blue-400">Upgrade (PayPal)</button>
+                </div>
+            </div>
+            <!-- Heavenly Sage -->
+            <div class="sage-gradient p-6 rounded-2xl gold-glow">
+                <h4 class="text-xl font-bold text-yellow-500">Heavenly Sage</h4>
+                <p class="text-2xl font-bold text-yellow-500">₹449/mo</p>
+                <div class="flex flex-col gap-2 mt-6">
+                    <button onclick="startPayment('heavenly_sage','razorpay')" class="w-full py-2 bg-yellow-600 text-black font-bold rounded-lg hover:bg-yellow-500">Upgrade (₹ UPI)</button>
+                    <button onclick="startPayment('heavenly_sage','paypal')"   class="w-full py-2 border border-blue-500 rounded-lg hover:bg-blue-500/10 text-blue-400">Upgrade (PayPal)</button>
+                </div>
+            </div>
+            <!-- Celestial Sage -->
+            <div class="sage-gradient p-6 rounded-2xl" style="border-color:#a855f7">
+                <h4 class="text-xl font-bold text-purple-400">Celestial Sage</h4>
+                <p class="text-2xl font-bold text-purple-400">₹999/mo</p>
+                <div class="flex flex-col gap-2 mt-6">
+                    <button onclick="startPayment('celestial_sage','razorpay')" class="w-full py-2 border border-purple-500 rounded-lg hover:bg-purple-500/10">Upgrade (₹ UPI)</button>
+                    <button onclick="startPayment('celestial_sage','paypal')"   class="w-full py-2 border border-blue-500 rounded-lg hover:bg-blue-500/10 text-blue-400">Upgrade (PayPal)</button>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Payment Success Modal -->
+    <div id="successModal" class="hidden fixed inset-0 bg-black/90 flex items-center justify-center p-6 z-50">
+        <div class="bg-zinc-900 border border-green-500 p-10 rounded-3xl max-w-sm text-center">
+            <div class="w-20 h-20 bg-green-500/20 rounded-full flex items-center justify-center mx-auto mb-6">
+                <i class="fas fa-check text-4xl text-green-500"></i>
+            </div>
+            <h2 class="text-2xl font-bold mb-2">Payment Complete!</h2>
+            <p class="text-gray-400 mb-6">You are now whitelisted. Your role will be applied the moment you join.</p>
+            <div class="bg-black p-4 rounded-lg border border-gray-800 mb-6">
+                <p class="text-xs text-gray-500 uppercase">Server IP</p>
+                <p class="text-xl font-mono text-green-400">play.7sage.com</p>
+            </div>
+            <button onclick="closeModal()" class="w-full bg-green-600 py-3 rounded-xl font-bold">Start Playing</button>
+        </div>
+    </div>
+
+    <!-- Error Toast -->
+    <div id="toast" class="hidden fixed bottom-6 right-6 bg-red-900 border border-red-500 text-white px-6 py-3 rounded-xl z-50 max-w-sm"></div>
+
+<script>
+// ─── State ───────────────────────────────────────────────
+let currentUser = null;
+
+// ─── On load: check if already logged in ─────────────────
+window.addEventListener('DOMContentLoaded', async () => {
+    try {
+        const res = await fetch('/auth/me', { credentials: 'include' });
+        if (res.ok) {
+            currentUser = await res.json();
+            updateNavForUser(currentUser);
+        }
+    } catch (_) {}
+});
+
+function updateNavForUser(user) {
+    const area = document.getElementById('authArea');
+    area.innerHTML = `
+        <div class="flex items-center gap-4">
+            <span class="text-green-400 font-bold">
+                <i class="fas fa-user mr-1"></i>
+                ${user.minecraftName || user.displayName}
+            </span>
+            <button onclick="logout()" class="text-gray-400 hover:text-white text-sm border border-gray-700 px-3 py-1 rounded-lg">Logout</button>
+        </div>`;
+}
+
+// ─── Auth actions ─────────────────────────────────────────
+function login() {
+    window.location.href = '/auth/microsoft';
+}
+
+async function logout() {
+    await fetch('/auth/logout', { method: 'POST', credentials: 'include' });
+    window.location.reload();
+}
+
+// ─── Payment entry point ──────────────────────────────────
+async function startPayment(product, gateway) {
+    if (!currentUser) {
+        document.getElementById('authMsg').classList.remove('hidden');
+        return;
+    }
+    if (!currentUser.minecraftName) {
+        showToast('Your Microsoft account has no Minecraft Java Edition linked.');
+        return;
+    }
+
+    if (gateway === 'razorpay') {
+        await payWithRazorpay(product);
+    } else {
+        await payWithPayPal(product);
+    }
+}
+
+// ─── Razorpay ─────────────────────────────────────────────
+async function payWithRazorpay(product) {
+    try {
+        const res  = await fetch('/pay/razorpay/order', {
+            method:      'POST',
+            credentials: 'include',
+            headers:     { 'Content-Type': 'application/json' },
+            body:        JSON.stringify({ product }),
+        });
+        const data = await res.json();
+        if (!res.ok) { showToast(data.error || 'Failed to create order.'); return; }
+
+        const rzp = new Razorpay({
+            key:         data.keyId,
+            order_id:    data.rzpOrderId,
+            amount:      data.amount,
+            currency:    data.currency,
+            name:        '7 Sage SMP',
+            description: data.productName,
+            prefill:     { name: data.name, email: data.email },
+            theme:       { color: '#22c55e' },
+            handler:     function () {
+                // Do NOT fulfil here — wait for the server webhook to do it.
+                // Just show the success UI.
+                document.getElementById('successModal').classList.remove('hidden');
+            },
+        });
+        rzp.open();
+    } catch (err) {
+        showToast('Payment error: ' + err.message);
+    }
+}
+
+// ─── PayPal ───────────────────────────────────────────────
+async function payWithPayPal(product) {
+    try {
+        const res  = await fetch('/pay/paypal/order', {
+            method:      'POST',
+            credentials: 'include',
+            headers:     { 'Content-Type': 'application/json' },
+            body:        JSON.stringify({ product }),
+        });
+        const data = await res.json();
+        if (!res.ok) { showToast(data.error || 'Failed to create PayPal order.'); return; }
+
+        // Dynamically load PayPal JS SDK with the server's client id
+        await loadPayPalSDK(data.clientId);
+
+        // Create a temporary container and render the button
+        const container = document.createElement('div');
+        container.id    = 'paypal-button-container';
+        container.style.cssText = 'position:fixed;inset:0;background:rgba(0,0,0,0.85);display:flex;align-items:center;justify-content:center;z-index:100;';
+        document.body.appendChild(container);
+
+        paypal.Buttons({
+            createOrder: () => data.ppOrderId,
+            onApprove: async () => {
+                document.body.removeChild(container);
+                document.getElementById('successModal').classList.remove('hidden');
+                // Fulfillment happens server-side via PayPal webhook
+            },
+            onCancel: () => document.body.removeChild(container),
+            onError:  (err) => { document.body.removeChild(container); showToast('PayPal error: ' + err); },
+        }).render('#paypal-button-container');
+    } catch (err) {
+        showToast('PayPal error: ' + err.message);
+    }
+}
+
+function loadPayPalSDK(clientId) {
+    return new Promise((resolve, reject) => {
+        if (window.paypal) return resolve();
+        const script   = document.createElement('script');
+        script.src     = `https://www.paypal.com/sdk/js?client-id=${clientId}&currency=USD`;
+        script.onload  = resolve;
+        script.onerror = reject;
+        document.head.appendChild(script);
+    });
+}
+
+// ─── Helpers ──────────────────────────────────────────────
+function closeModal() {
+    document.getElementById('successModal').classList.add('hidden');
+}
+
+function showToast(msg) {
+    const t = document.getElementById('toast');
+    t.textContent = msg;
+    t.classList.remove('hidden');
+    setTimeout(() => t.classList.add('hidden'), 5000);
+}
+</script>
+</body>
+</html>
